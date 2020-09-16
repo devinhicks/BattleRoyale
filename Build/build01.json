@@ -1,0 +1,16 @@
+{
+"companyName": "DefaultCompany",
+"productName": "NotFortnite",
+"productVersion": "0.1",
+"dataUrl": "build01.data.unityweb",
+"wasmCodeUrl": "build01.wasm.code.unityweb",
+"wasmFrameworkUrl": "build01.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0","WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": true,
+"multithreading": false,
+"unityVersion": "2019.2.21f1"
+}

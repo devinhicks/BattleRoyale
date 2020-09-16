@@ -13,8 +13,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void Awake()
     {
-        instance = this;
-        DontDestroyOnLoad(gameObject);
+        if (instance != null && instance != this)
+            gameObject.SetActive(false);
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
 
     // Start is called before the first frame update
@@ -33,6 +38,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("We've connected to the master server!");
+        PhotonNetwork.JoinLobby();
     }
 
     // attempts to create a room
@@ -50,7 +56,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(roomName);
     }
 
-    public void ChangeScene (string sceneName)
+    [PunRPC]
+    public void ChangeScene(string sceneName)
     {
         PhotonNetwork.LoadLevel(sceneName);
     }

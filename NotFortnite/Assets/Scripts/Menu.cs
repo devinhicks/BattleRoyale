@@ -44,6 +44,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         if(PhotonNetwork.InRoom)
         {
             // go to the lobby
+            SetScreen(lobbyScreen);
+            UpdateLobbyUI();
 
             // make the room visible
             PhotonNetwork.CurrentRoom.IsVisible = true;
@@ -69,6 +71,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         }
     }
 
+    /* Main Screen */
+
     public void OnPlayerNameValueChanged(TMP_InputField playerNameInput)
     {
         PhotonNetwork.NickName = playerNameInput.text;
@@ -80,7 +84,7 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         createRoomButton.interactable = true;
         findRoomButton.interactable = true;
 
-        PhotonNetwork.JoinLobby();
+       // PhotonNetwork.JoinLobby();
     }
 
     // called when the "Create Room" button has been pressed.
@@ -95,6 +99,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         SetScreen(lobbyBrowserScreen);
     }
 
+    /* Create Room Screen */
+
     // called when the "Back" button gets pressed
     public void OnBackButton()
     {
@@ -106,15 +112,17 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         NetworkManager.instance.CreateRoom(roomNameInput.text);
     }
 
+    /* Lobby Screen */
+
+
     public override void OnJoinedRoom()
     {
-        // go to the lobby
         SetScreen(lobbyScreen);
         UpdateLobbyUI();
     }
 
     [PunRPC]
-    public void UpdateLobbyUI()
+    void UpdateLobbyUI()
     {
         // enable or disable the start game button depending on if we're the host
         startGameButton.interactable = PhotonNetwork.IsMasterClient;
@@ -148,6 +156,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         PhotonNetwork.LeaveRoom();
         SetScreen(mainScreen);
     }
+
+    /* Lobby Browser Screen */
 
     void UpdateLobbyBrowserUI()
     {
