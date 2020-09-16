@@ -30,6 +30,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
     private List<GameObject> roomButtons = new List<GameObject>();
     private List<RoomInfo> roomList = new List<RoomInfo>();
 
+    public GameObject obj;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -118,7 +120,7 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
     public override void OnJoinedRoom()
     {
         SetScreen(lobbyScreen);
-        UpdateLobbyUI();
+        photonView.RPC("UpdateLobbyUI", RpcTarget.All);
     }
 
     [PunRPC]
@@ -148,6 +150,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         PhotonNetwork.CurrentRoom.IsVisible = false;
 
         // tell everyone to load the game scene
+        //Debug.Log("this part works");
+
         NetworkManager.instance.photonView.RPC("ChangeScene", RpcTarget.All, "Game");
     }
 
