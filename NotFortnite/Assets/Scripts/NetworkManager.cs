@@ -29,12 +29,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public override void OnConnectedToMaster()
     {
         Debug.Log("We've connected to the master server!");
@@ -51,7 +45,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     // attempts to join a room
-    public void JoinRoom (string roomName)
+    public void JoinRoom(string roomName)
     {
         PhotonNetwork.JoinRoom(roomName);
     }
@@ -61,5 +55,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Change scene called");
         PhotonNetwork.LoadLevel(sceneName);
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        PhotonNetwork.LoadLevel("Menu");
+    }
+
+    //punRPC??
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        GameManager.instance.alivePlayers--;
+        GameUI.instance.UpdatePlayerInfoText();
+
+        if(PhotonNetwork.IsMasterClient)
+        {
+            GameManager.instance.CheckWinCondition();
+        }
     }
 }
