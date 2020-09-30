@@ -8,14 +8,21 @@ using System.Linq;
 public class GameManager : MonoBehaviourPun
 {
     [Header("Players")]
-    public string playerPrefabLocation;
+    public string playerPrefabLocation1; // first team spawn points
+    public string playerPrefabLocation2; // second team spawn points
     public PlayerController[] players;
-    public Transform[] spawnPoints;
+    public Transform[] humanSpawnPoints;
+    public Transform[] alienSpawnPoints;
     public int alivePlayers;
+    public int humanPlayers;
+    public int alienPlayers;
 
     private int playersInGame;
+    private int numPlayers;
 
     public float postGameTime;
+
+    public Material mat;
 
     // instance
     public static GameManager instance;
@@ -48,12 +55,27 @@ public class GameManager : MonoBehaviourPun
     [PunRPC]
     void SpawnPlayer()
     {
-        GameObject playerObj = PhotonNetwork.Instantiate(playerPrefabLocation,
-            spawnPoints[Random.Range(0, spawnPoints.Length)].position, Quaternion.identity);
+        GameObject playerObj;
 
-        // initialize the player for all other players
-        playerObj.GetComponent<PlayerController>().photonView.RPC("Initialize",
-            RpcTarget.All, PhotonNetwork.LocalPlayer);
+        if (numPlayers % 2 == 1)
+        {
+            playerObj = PhotonNetwork.Instantiate(playerPrefabLocation1, humanSpawnPoints[
+                Random.Range(0, humanSpawnPoints.Length)].position, Quaternion.identity);
+            humanPlayers++;
+            numPlayers++;
+        }
+
+        else
+        {
+            playerObj = PhotonNetwork.Instantiate(playerPrefabLocation2, alienSpawnPoints[
+                Random.Range(0, alienSpawnPoints.Length)].position, Quaternion.identity);
+            playerObj.GetComponent<MeshRenderer>().material = mat;
+            alienPlayers++;
+            numPlayers++;
+        }
+
+        // initialize player for all other players
+        playerObj.GetComponent<PlayerController>().photonView.RPC("Initialize", RpcTarget.All, PhotonNetwork.LocalPlayer);
     }
 
     public PlayerController GetPlayer(int playerId)
@@ -80,7 +102,7 @@ public class GameManager : MonoBehaviourPun
 
     public void CheckWinCondition()
     {
-        if (alivePlayers == 1)
+        if (humanPlayers == 0 || alienPlayers == 0)
             photonView.RPC("WinGame", RpcTarget.All, players.First(x => !x.dead).id);
     }
 
@@ -88,7 +110,14 @@ public class GameManager : MonoBehaviourPun
     void WinGame (int winningPlayer)
     {
         // set the UI win text
-        GameUI.instance.SetWinText(GetPlayer(winningPlayer).photonPlayer.NickName);
+        if (alienPlayers == 0)
+        {
+            GameUI.instance.SetWinText("The Humans Have Prevailed!");
+        }
+        if (humanPlayers == 0)
+        {
+            GameUI.instance.SetWinText("The Aliens Have Prevailed!");
+        }
 
         Invoke("GoBackToMenu", postGameTime);
     }

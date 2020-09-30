@@ -86,6 +86,11 @@ public class PlayerController : MonoBehaviourPun
         {
             GameUI.instance.Initialize(this);
         }
+
+        if (id % 2 != 0)
+        {
+            mr.material = GameManager.instance.mat;
+        }
     }
 
     [PunRPC]
@@ -140,6 +145,16 @@ public class PlayerController : MonoBehaviourPun
         dead = true;
 
         GameManager.instance.alivePlayers--;
+
+        // increment team counts
+        if (id % 2 == 0)
+        {
+            GameManager.instance.humanPlayers--;
+        }
+        else
+        {
+            GameManager.instance.alienPlayers--;
+        }
 
         // host will check win condition
         if (PhotonNetwork.IsMasterClient)
